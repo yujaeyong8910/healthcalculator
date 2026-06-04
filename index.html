@@ -1,0 +1,322 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:2rem 0;font-family:var(--font-sans)}
+.hero{display:flex;align-items:center;gap:14px;margin-bottom:2rem}
+.hero-icon{width:48px;height:48px;border-radius:var(--border-radius-lg);background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:22px;color:#534AB7;flex-shrink:0}
+.hero-title{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.hero-sub{font-size:13px;color:var(--color-text-secondary);margin-top:3px}
+
+.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:2rem}
+.nav-btn{padding:10px 6px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);cursor:pointer;text-align:center;transition:all .15s}
+.nav-btn:hover{border-color:var(--color-border-secondary);background:var(--color-background-secondary)}
+.nav-btn.active{border-color:#534AB7;background:#EEEDFE}
+.nav-btn .nav-icon{font-size:20px;color:var(--color-text-secondary);margin-bottom:5px}
+.nav-btn.active .nav-icon{color:#534AB7}
+.nav-btn .nav-label{font-size:12px;color:var(--color-text-secondary);font-weight:400}
+.nav-btn.active .nav-label{color:#3C3489;font-weight:500}
+
+.panel{display:none}
+.panel.active{display:block}
+
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+
+.sex-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1rem}
+.sex-btn{height:38px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;cursor:pointer;font-size:13px;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.sex-btn.on{border-color:#534AB7;background:#EEEDFE;color:#3C3489;font-weight:500}
+
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.span2{grid-column:1/-1}
+.field label{font-size:12px;color:var(--color-text-secondary)}
+.field input,.field select{height:38px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:0 10px;font-size:14px;color:var(--color-text-primary);background:var(--color-background-primary);width:100%}
+.field input:focus,.field select:focus{outline:none;border-color:#7F77DD}
+
+.go-btn{width:100%;height:42px;background:#534AB7;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.go-btn:hover{opacity:.88}
+
+.results{display:none;margin-top:1.25rem}
+.results.show{display:block}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.25rem}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px}
+.stat-lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:none}
+.stat-val{font-size:24px;font-weight:500;color:var(--color-text-primary);line-height:1}
+.stat-unit{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
+
+.status-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;margin-bottom:1.25rem;width:100%}
+.status-pill .sp-msg{font-weight:400;font-size:13px;margin-left:4px}
+
+.bmi-track{margin-bottom:1.25rem}
+.track-labels{display:flex;justify-content:space-between;margin-bottom:6px}
+.track-label{font-size:11px;color:var(--color-text-secondary)}
+.track-bar{height:6px;border-radius:3px;background:var(--color-border-tertiary);position:relative;overflow:visible}
+.track-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.track-marker{position:absolute;top:-4px;width:14px;height:14px;border-radius:50%;border:2px solid var(--color-background-primary);transition:left .5s ease;transform:translateX(-50%)}
+
+.advice-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.advice-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px}
+.advice-item{display:flex;gap:8px;font-size:13px;color:var(--color-text-primary);margin-bottom:8px;line-height:1.55}
+.advice-item:last-child{margin-bottom:0}
+.advice-dot{width:5px;height:5px;border-radius:50%;background:#7F77DD;flex-shrink:0;margin-top:6px}
+
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1.25rem 0}
+
+.pu{background:#EEEDFE;color:#3C3489}
+.gr{background:#EAF3DE;color:#3B6D11}
+.am{background:#FAEEDA;color:#854F0B}
+.rd{background:#FAECE7;color:#993C1D}
+.bl{background:#E6F1FB;color:#185FA5}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">건강 지표 계산기</h2>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-icon"><i class="ti ti-heart-rate-monitor" aria-hidden="true"></i></div>
+    <div>
+      <div class="hero-title">건강 지표 계산기</div>
+      <div class="hero-sub">BMI · 기초대사량 · 일일 칼로리 · 이상 체중</div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="go('bmi')" id="nb-bmi">
+      <div class="nav-icon"><i class="ti ti-weight" aria-hidden="true"></i></div>
+      <div class="nav-label">BMI</div>
+    </button>
+    <button class="nav-btn" onclick="go('bmr')" id="nb-bmr">
+      <div class="nav-icon"><i class="ti ti-flame" aria-hidden="true"></i></div>
+      <div class="nav-label">기초대사량</div>
+    </button>
+    <button class="nav-btn" onclick="go('tdee')" id="nb-tdee">
+      <div class="nav-icon"><i class="ti ti-salad" aria-hidden="true"></i></div>
+      <div class="nav-label">일일 칼로리</div>
+    </button>
+    <button class="nav-btn" onclick="go('ideal')" id="nb-ideal">
+      <div class="nav-icon"><i class="ti ti-target" aria-hidden="true"></i></div>
+      <div class="nav-label">이상 체중</div>
+    </button>
+  </div>
+
+  <div id="p-bmi" class="panel active">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-ruler-measure" style="font-size:16px" aria-hidden="true"></i>신체 정보 입력</div>
+      <div class="sex-toggle">
+        <button class="sex-btn on" id="bmi-m" onclick="sg('bmi','m')"><i class="ti ti-mars" style="font-size:16px" aria-hidden="true"></i>남성</button>
+        <button class="sex-btn" id="bmi-f" onclick="sg('bmi','f')"><i class="ti ti-venus" style="font-size:16px" aria-hidden="true"></i>여성</button>
+      </div>
+      <div class="fields">
+        <div class="field"><label>키 (cm)</label><input type="number" id="bmi-h" placeholder="175" min="100" max="250"></div>
+        <div class="field"><label>몸무게 (kg)</label><input type="number" id="bmi-w" placeholder="70" min="20" max="300"></div>
+      </div>
+      <button class="go-btn" onclick="cBMI()"><i class="ti ti-calculator" style="font-size:16px" aria-hidden="true"></i>계산하기</button>
+    </div>
+    <div id="r-bmi" class="results">
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-lbl">BMI 지수</div><div class="stat-val" id="bmi-v">—</div><div class="stat-unit">kg/m²</div></div>
+        <div class="stat"><div class="stat-lbl">분류</div><div class="stat-val" id="bmi-c" style="font-size:17px;margin-top:6px">—</div></div>
+        <div class="stat"><div class="stat-lbl">정상 범위</div><div class="stat-val" id="bmi-r" style="font-size:15px;margin-top:8px">—</div></div>
+      </div>
+      <div id="bmi-pill" class="status-pill pu"><i class="ti ti-circle-check" style="font-size:18px" aria-hidden="true"></i><span id="bmi-pt">—</span><span class="sp-msg" id="bmi-pm">—</span></div>
+      <div class="bmi-track">
+        <div class="track-labels">
+          <span class="track-label">저체중</span>
+          <span class="track-label">정상</span>
+          <span class="track-label">과체중</span>
+          <span class="track-label">비만</span>
+        </div>
+        <div class="track-bar">
+          <div id="bmi-tf" class="track-fill" style="width:0%"></div>
+          <div id="bmi-tm" class="track-marker" style="left:0%"></div>
+        </div>
+      </div>
+      <div class="advice-card" id="bmi-adv"></div>
+    </div>
+  </div>
+
+  <div id="p-bmr" class="panel">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-bolt" style="font-size:16px" aria-hidden="true"></i>신체 정보 입력</div>
+      <div class="sex-toggle">
+        <button class="sex-btn on" id="bmr-m" onclick="sg('bmr','m')"><i class="ti ti-mars" style="font-size:16px" aria-hidden="true"></i>남성</button>
+        <button class="sex-btn" id="bmr-f" onclick="sg('bmr','f')"><i class="ti ti-venus" style="font-size:16px" aria-hidden="true"></i>여성</button>
+      </div>
+      <div class="fields">
+        <div class="field"><label>키 (cm)</label><input type="number" id="bmr-h" placeholder="175" min="100" max="250"></div>
+        <div class="field"><label>몸무게 (kg)</label><input type="number" id="bmr-w" placeholder="70" min="20" max="300"></div>
+        <div class="field span2"><label>나이</label><input type="number" id="bmr-a" placeholder="30" min="1" max="120"></div>
+      </div>
+      <button class="go-btn" onclick="cBMR()"><i class="ti ti-calculator" style="font-size:16px" aria-hidden="true"></i>계산하기</button>
+    </div>
+    <div id="r-bmr" class="results">
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-lbl">기초대사량</div><div class="stat-val" id="bmr-v">—</div><div class="stat-unit">kcal / 일</div></div>
+        <div class="stat"><div class="stat-lbl">시간당 소모</div><div class="stat-val" id="bmr-hr">—</div><div class="stat-unit">kcal / 시간</div></div>
+        <div class="stat"><div class="stat-lbl">수면 중 (8h)</div><div class="stat-val" id="bmr-sl">—</div><div class="stat-unit">kcal</div></div>
+      </div>
+      <div class="advice-card" id="bmr-adv"></div>
+    </div>
+  </div>
+
+  <div id="p-tdee" class="panel">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-run" style="font-size:16px" aria-hidden="true"></i>신체 정보 입력</div>
+      <div class="sex-toggle">
+        <button class="sex-btn on" id="tdee-m" onclick="sg('tdee','m')"><i class="ti ti-mars" style="font-size:16px" aria-hidden="true"></i>남성</button>
+        <button class="sex-btn" id="tdee-f" onclick="sg('tdee','f')"><i class="ti ti-venus" style="font-size:16px" aria-hidden="true"></i>여성</button>
+      </div>
+      <div class="fields">
+        <div class="field"><label>키 (cm)</label><input type="number" id="tdee-h" placeholder="175" min="100" max="250"></div>
+        <div class="field"><label>몸무게 (kg)</label><input type="number" id="tdee-w" placeholder="70" min="20" max="300"></div>
+        <div class="field span2"><label>나이</label><input type="number" id="tdee-a" placeholder="30" min="1" max="120"></div>
+        <div class="field span2">
+          <label>활동 수준</label>
+          <select id="tdee-act">
+            <option value="1.2">거의 없음 — 주로 앉아서 생활</option>
+            <option value="1.375">가벼운 운동 — 주 1–3회</option>
+            <option value="1.55" selected>보통 활동 — 주 3–5회</option>
+            <option value="1.725">활동적 — 주 6–7회</option>
+            <option value="1.9">매우 활동적 — 운동선수 수준</option>
+          </select>
+        </div>
+      </div>
+      <button class="go-btn" onclick="cTDEE()"><i class="ti ti-calculator" style="font-size:16px" aria-hidden="true"></i>계산하기</button>
+    </div>
+    <div id="r-tdee" class="results">
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-lbl">유지 칼로리 (TDEE)</div><div class="stat-val" id="tdee-v">—</div><div class="stat-unit">kcal / 일</div></div>
+        <div class="stat"><div class="stat-lbl">감량 목표 <span style="font-size:11px;opacity:.7">−500</span></div><div class="stat-val" id="tdee-lo">—</div><div class="stat-unit">kcal / 일</div></div>
+        <div class="stat"><div class="stat-lbl">증량 목표 <span style="font-size:11px;opacity:.7">+300</span></div><div class="stat-val" id="tdee-hi">—</div><div class="stat-unit">kcal / 일</div></div>
+      </div>
+      <div class="advice-card" id="tdee-adv"></div>
+    </div>
+  </div>
+
+  <div id="p-ideal" class="panel">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-target-arrow" style="font-size:16px" aria-hidden="true"></i>신체 정보 입력</div>
+      <div class="sex-toggle">
+        <button class="sex-btn on" id="ideal-m" onclick="sg('ideal','m')"><i class="ti ti-mars" style="font-size:16px" aria-hidden="true"></i>남성</button>
+        <button class="sex-btn" id="ideal-f" onclick="sg('ideal','f')"><i class="ti ti-venus" style="font-size:16px" aria-hidden="true"></i>여성</button>
+      </div>
+      <div class="fields">
+        <div class="field"><label>키 (cm)</label><input type="number" id="ideal-h" placeholder="175" min="100" max="250"></div>
+        <div class="field"><label>현재 몸무게 (kg)</label><input type="number" id="ideal-w" placeholder="70" min="20" max="300"></div>
+      </div>
+      <button class="go-btn" onclick="cIdeal()"><i class="ti ti-calculator" style="font-size:16px" aria-hidden="true"></i>계산하기</button>
+    </div>
+    <div id="r-ideal" class="results">
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-lbl">Devine 공식</div><div class="stat-val" id="idv-d">—</div><div class="stat-unit">kg</div></div>
+        <div class="stat"><div class="stat-lbl">Robinson 공식</div><div class="stat-val" id="idv-r">—</div><div class="stat-unit">kg</div></div>
+        <div class="stat"><div class="stat-lbl">BMI 정상 범위</div><div class="stat-val" id="idv-rng" style="font-size:15px;margin-top:6px">—</div></div>
+        <div class="stat"><div class="stat-lbl">현재 체중과의 차이</div><div class="stat-val" id="idv-d2" style="font-size:18px;margin-top:6px">—</div></div>
+      </div>
+      <div class="advice-card" id="ideal-adv"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const sex={bmi:'m',bmr:'m',tdee:'m',ideal:'m'};
+
+function go(tab){
+  ['bmi','bmr','tdee','ideal'].forEach(t=>{
+    document.getElementById('nb-'+t).classList.toggle('active',t===tab);
+    document.getElementById('p-'+t).classList.toggle('active',t===tab);
+  });
+}
+
+function sg(panel,g){
+  sex[panel]=g;
+  document.getElementById(panel+'-m').classList.toggle('on',g==='m');
+  document.getElementById(panel+'-f').classList.toggle('on',g==='f');
+}
+
+function adv(id,items){
+  document.getElementById(id).innerHTML=`<div class="advice-title"><i class="ti ti-bulb" style="font-size:14px;vertical-align:-1px;margin-right:4px" aria-hidden="true"></i>건강 조언</div>`+items.map(t=>`<div class="advice-item"><div class="advice-dot"></div>${t}</div>`).join('');
+}
+
+function cBMI(){
+  const h=+document.getElementById('bmi-h').value,w=+document.getElementById('bmi-w').value;
+  if(!h||!w)return;
+  const m=h/100,bmi=+(w/(m*m)).toFixed(1);
+  const lo=+(18.5*m*m).toFixed(1),hi=+(23*m*m).toFixed(1);
+  document.getElementById('bmi-v').textContent=bmi;
+  document.getElementById('bmi-r').textContent=lo+' – '+hi+' kg';
+
+  let cat,pillCls,icon,pt,pm,fc,mc,tips;
+  const pct=Math.min(97,Math.max(3,((bmi-10)/30)*100));
+  if(bmi<18.5){cat='저체중';pillCls='bl';icon='ti-trending-down';pt='저체중';pm='정상 범위보다 체중이 낮습니다';fc='#85B7EB';mc='#185FA5';
+    tips=['균형 잡힌 식사로 단백질·탄수화물 섭취를 늘려보세요.','규칙적인 근력 운동으로 근육량을 증가시켜 보세요.','영양사 또는 의사와 상담해 건강한 증량 계획을 세우세요.'];}
+  else if(bmi<23){cat='정상';pillCls='gr';icon='ti-circle-check';pt='정상 체중';pm='건강한 범위를 잘 유지하고 있습니다';fc='#97C459';mc='#639922';
+    tips=['현재의 균형 잡힌 식단과 운동 습관을 유지하세요.','정기 건강 검진으로 건강 상태를 꾸준히 점검하세요.','수면과 스트레스 관리도 체중 유지에 중요한 요소입니다.'];}
+  else if(bmi<25){cat='과체중 경계';pillCls='am';icon='ti-alert-triangle';pt='과체중 경계';pm='조금씩 생활 습관을 개선해 보세요';fc='#EF9F27';mc='#BA7517';
+    tips=['주 3회 이상 유산소 운동을 시작해보세요.','설탕·가공식품을 줄이고 채소 섭취를 늘려보세요.','식사 일지를 통해 칼로리 흐름을 파악해보세요.'];}
+  else if(bmi<30){cat='과체중';pillCls='am';icon='ti-alert-triangle';pt='과체중';pm='체중 감량이 건강에 도움이 됩니다';fc='#EF9F27';mc='#BA7517';
+    tips=['하루 500 kcal 감소만으로 주 0.5 kg 감량이 가능합니다.','걷기·자전거 등 저강도 운동부터 꾸준히 시작하세요.','혈압·혈당 등 건강 지표를 정기적으로 확인하세요.'];}
+  else{cat='비만';pillCls='rd';icon='ti-alert-circle';pt='비만';pm='전문가 상담을 권장합니다';fc='#F0997B';mc='#993C1D';
+    tips=['의사·영양사와 체계적인 감량 계획을 세우세요.','급격한 다이어트보다 지속 가능한 방식을 선택하세요.','정기 건강 검진으로 합병증 예방에 신경 쓰세요.'];}
+
+  document.getElementById('bmi-c').textContent=cat;
+  const pill=document.getElementById('bmi-pill');
+  pill.className='status-pill '+pillCls;
+  pill.innerHTML=`<i class="ti ${icon}" style="font-size:18px" aria-hidden="true"></i><span id="bmi-pt">${pt}</span><span class="sp-msg">${pm}</span>`;
+  document.getElementById('bmi-tf').style.cssText=`width:${pct}%;background:${fc}`;
+  const m2=document.getElementById('bmi-tm');
+  m2.style.cssText=`left:${pct}%;background:${mc};top:-4px;width:14px;height:14px;border-radius:50%;border:2px solid var(--color-background-primary);position:absolute;transform:translateX(-50%);transition:left .5s`;
+  adv('bmi-adv',tips);
+  document.getElementById('r-bmi').classList.add('show');
+}
+
+function bmrCalc(h,w,a,g){
+  return g==='m'?(10*w+6.25*h-5*a+5):(10*w+6.25*h-5*a-161);
+}
+
+function cBMR(){
+  const h=+document.getElementById('bmr-h').value,w=+document.getElementById('bmr-w').value,a=+document.getElementById('bmr-a').value;
+  if(!h||!w||!a)return;
+  const bmr=Math.round(bmrCalc(h,w,a,sex.bmr));
+  document.getElementById('bmr-v').textContent=bmr.toLocaleString();
+  document.getElementById('bmr-hr').textContent=Math.round(bmr/24);
+  document.getElementById('bmr-sl').textContent=Math.round(bmr/24*8);
+  adv('bmr-adv',sex.bmr==='m'
+    ?['남성 평균 BMR은 약 1,700–2,000 kcal입니다.','근육량이 높을수록 기초대사량도 높아집니다.','나이가 들수록 매년 약 1–2%씩 기초대사량이 감소합니다.']
+    :['여성 평균 BMR은 약 1,400–1,600 kcal입니다.','근력 운동을 통해 근육량을 늘리면 대사량이 향상됩니다.','임신·수유 중에는 기초대사량이 크게 증가합니다.']);
+  document.getElementById('r-bmr').classList.add('show');
+}
+
+function cTDEE(){
+  const h=+document.getElementById('tdee-h').value,w=+document.getElementById('tdee-w').value,a=+document.getElementById('tdee-a').value,act=+document.getElementById('tdee-act').value;
+  if(!h||!w||!a)return;
+  const tdee=Math.round(bmrCalc(h,w,a,sex.tdee)*act);
+  document.getElementById('tdee-v').textContent=tdee.toLocaleString();
+  document.getElementById('tdee-lo').textContent=(tdee-500).toLocaleString();
+  document.getElementById('tdee-hi').textContent=(tdee+300).toLocaleString();
+  adv('tdee-adv',[`유지: 매일 ${tdee.toLocaleString()} kcal를 섭취하면 현재 체중을 유지합니다.`,'감량: 하루 500 kcal 제한 시 주당 약 0.5 kg 감량 효과를 기대할 수 있습니다.','증량: 하루 300 kcal를 더 섭취하고 근력 운동을 병행하면 근육과 함께 체중을 늘릴 수 있습니다.']);
+  document.getElementById('r-tdee').classList.add('show');
+}
+
+function cIdeal(){
+  const h=+document.getElementById('ideal-h').value,w=+document.getElementById('ideal-w').value;
+  if(!h)return;
+  const inc=(h-152.4)/2.54;
+  let dv,rb;
+  if(sex.ideal==='m'){dv=+(50+2.3*inc).toFixed(1);rb=+(52+1.9*inc).toFixed(1);}
+  else{dv=+(45.5+2.3*inc).toFixed(1);rb=+(49+1.7*inc).toFixed(1);}
+  const hm=h/100,rlo=+(18.5*hm*hm).toFixed(1),rhi=+(23*hm*hm).toFixed(1);
+  document.getElementById('idv-d').textContent=dv;
+  document.getElementById('idv-r').textContent=rb;
+  document.getElementById('idv-rng').textContent=rlo+' – '+rhi+' kg';
+  if(w){
+    const avg=(dv+rb)/2,diff=+(w-avg).toFixed(1);
+    const el=document.getElementById('idv-d2');
+    el.textContent=(diff>0?'+':'')+diff+' kg';
+    el.style.color=diff>2?'#993C1D':diff<-2?'#185FA5':'#3B6D11';
+  }
+  adv('ideal-adv',['Devine 공식은 1974년 발표된 가장 널리 사용되는 이상 체중 계산식입니다.','Robinson 공식은 체격에 따른 개인차를 반영한 보완 공식입니다.','이상 체중은 참고 수치이며 근육량·체형에 따라 개인 목표는 달라질 수 있습니다.']);
+  document.getElementById('r-ideal').classList.add('show');
+}
+</script>
